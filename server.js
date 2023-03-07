@@ -1,10 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+
 const { buildSchema }  = require('graphql')
 const { graphqlHTTP } = require('express-graphql')
 
-
-const events = []
+const mongoose = require('mongoose')
+const Event = require('./models/event')
 
 const app = express()
 app.use(bodyParser.json())
@@ -43,24 +44,41 @@ app.use('/graphql', graphqlHTTP({
     `),
     rootValue:{
         event : () => {
-            return events
+            return Event.find().then(events => {
+                return events.map(event => {
+                    return {...event._doc, _id: event.id}
+                })
+            }).catch(err => {
+                console.log(err)
+            })
         },
 
         createEvent : (args) => {
-            const event = {
-                _id : Math.random().toString(),
+            const event = new Event({
                 title: args.input.title,
                 description: args.input.description,
                 price: args.input.price,
                 date: new Date().toISOString()
-            }
-            events.push(event)
-            return event
+            })
+            return event.save().then(result => {
+                console.log(result)
+                return {...result._doc, _id: result._doc._id.toString()}
+            }).catch(err => {
+                console.log(err)
+            })
+            return 
         }
     },
     graphiql: true
 }))
 
 const port = 8081
-app.listen(port, () => console.log(`Server is Up and running at port:${port}`))
+
+
+mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`).then(() => {
+    app.listen(port, () => console.log(`Server is connected with mongoDB and Up and running at port:${port}`))}
+).catch( err => {
+    console.log(err)
+})
+
 
