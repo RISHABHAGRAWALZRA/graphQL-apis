@@ -46,7 +46,7 @@ module.exports = buildSchema(`
         }
 
         type RootQuery{
-            event : [Event!]!
+            events : [Event!]!
             bookings: [Booking!]!
         }
 
