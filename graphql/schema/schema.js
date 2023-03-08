@@ -1,4 +1,4 @@
-const { buildSchema }  = require('graphql')
+const { buildSchema } = require('graphql')
 
 module.exports = buildSchema(`
 
@@ -8,12 +8,14 @@ module.exports = buildSchema(`
             description: String
             price: Float!
             date: String!
+            creator: User!
         }
 
         type User{
             _id: ID
             email: String!
             password: String
+            createdEvents: [Event!]
         }
 
         input EventInput{
