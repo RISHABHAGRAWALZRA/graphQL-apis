@@ -18,8 +18,8 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true
 }))
 
-const port = 8081
 
+const port = 8081
 
 mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`).then(() => {
     app.listen(port, () => console.log(`Server is connected with mongoDB and Up and running at port:${port}`))}
