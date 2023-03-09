@@ -8,7 +8,7 @@ module.exports.isAuth = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1]
-    if (!toke || token == '') {
+    if (!token || token == '') {
         req.isAuth = false
         return next()
     }

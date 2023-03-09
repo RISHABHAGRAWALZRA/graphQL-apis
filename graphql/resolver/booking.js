@@ -5,7 +5,7 @@ const Event = require('../../models/event')
 
 module.exports = {
 
-    bookings: async (req) => {
+    bookings: async (args, req) => {
         try {
             if (!req.isAuth) {
                 throw new Error("Unauthenticated!")
