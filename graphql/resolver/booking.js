@@ -5,8 +5,11 @@ const Event = require('../../models/event')
 
 module.exports = {
 
-    bookings: async () => {
+    bookings: async (req) => {
         try {
+            if (!req.isAuth) {
+                throw new Error("Unauthenticated!")
+            }
             const bookings = await Booking.find()
             return bookings.map(booking => {
                 return transformBooking(booking)
@@ -18,11 +21,14 @@ module.exports = {
     },
 
 
-    bookEvent: async (args) => {
+    bookEvent: async (args, req) => {
         try {
+            if (!req.isAuth) {
+                throw new Error("Unauthenticated!")
+            }
             const foundEvent = await Event.findById(args.eventID);
             const booking = new Booking({
-                user: '640749d0ef23832673065c68',
+                user: req.userID,
                 event: foundEvent
             })
 
@@ -34,8 +40,11 @@ module.exports = {
         }
     },
 
-    cancelBooking: async (args) => {
+    cancelBooking: async (args, req) => {
         try {
+            if (!req.isAuth) {
+                throw new Error("Unauthenticated!")
+            }
             const booking = await Booking.findById(args.bookingID).populate('event')
             const foundEvent = transformEvent(booking.event)
             await Booking.deleteOne({ _id: args.bookingID })

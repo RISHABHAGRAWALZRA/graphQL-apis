@@ -5,16 +5,19 @@ const { graphqlHTTP } = require('express-graphql')
 
 const mongoose = require('mongoose')
 
-const graphQLSchema  = require('./graphql/schema/schema.js')
+const graphQLSchema = require('./graphql/schema/schema.js')
 const graphQLResolver = require('./graphql/resolver/resolver')
+
+const { isAuth } = require('./middleware/auth.js')
 
 
 const app = express()
 app.use(bodyParser.json())
 
+app.use(isAuth)
 app.use('/graphql', graphqlHTTP({
     schema: graphQLSchema,
-    rootValue:graphQLResolver,
+    rootValue: graphQLResolver,
     graphiql: true
 }))
 
@@ -22,8 +25,9 @@ app.use('/graphql', graphqlHTTP({
 const port = 8081
 
 mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`).then(() => {
-    app.listen(port, () => console.log(`Server is connected with mongoDB and Up and running at port:${port}`))}
-).catch( err => {
+    app.listen(port, () => console.log(`Server is connected with mongoDB and Up and running at port:${port}`))
+}
+).catch(err => {
     console.log(err)
 })
 

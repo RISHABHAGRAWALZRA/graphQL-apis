@@ -16,17 +16,20 @@ module.exports = {
         }
     },
 
-    createEvent: async (args) => {
+    createEvent: async (args, req) => {
         try {
+            if (!req.isAuth) {
+                throw new Error("Unauthorized!")
+            }
             const event = new Event({
                 title: args.input.title,
                 description: args.input.description,
                 price: args.input.price,
                 date: new Date().toISOString(),
-                creator: '640749d0ef23832673065c68'
+                creator: req.userID
             })
 
-            const foundUser = await User.findById('640749d0ef23832673065c68')
+            const foundUser = await User.findById(req.userID)
 
             if (foundUser) {
                 const resultEvent = await event.save()
